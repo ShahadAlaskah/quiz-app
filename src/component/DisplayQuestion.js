@@ -11,6 +11,8 @@ const DisplayQuestion = ({ name, categorieID, difficultyID, typeID }) => {
   const [caunter, setCaunter] = useState(0);
   const [score, setScore] = useState(0);
   const navigate = useNavigate();
+  const [showAnser, setShowAnser] = useState(false);
+  const [selectedAnser, setSelectedAnser] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +21,7 @@ const DisplayQuestion = ({ name, categorieID, difficultyID, typeID }) => {
           `https://opentdb.com/api.php?amount=10&category=${categorieID}&difficulty=${difficultyID}&type=${typeID}`
         );
         const data = await request.json();
+
         setQuestionList(data.results);
 
         setQuestion(data.results[0].question);
@@ -32,6 +35,7 @@ const DisplayQuestion = ({ name, categorieID, difficultyID, typeID }) => {
       } catch (e) {
         console.log(e);
       }
+      console.log("fetch Api");
     };
     fetchData();
   }, []);
@@ -47,6 +51,8 @@ const DisplayQuestion = ({ name, categorieID, difficultyID, typeID }) => {
   const select = (e) => {
     if (caunter !== 9) {
       // e.className = "btn btn-outline-primary active";
+      setShowAnser(true);
+      setSelectedAnser(e.id);
       if (e.id === correctAnswer) {
         setScore(score + 1);
       }
@@ -56,6 +62,19 @@ const DisplayQuestion = ({ name, categorieID, difficultyID, typeID }) => {
       navigate(`/score/${name}/${score}`);
     }
   };
+  // const style = (answer) => {
+  //   console.log(selectedAnser, showAnser);
+  //   if (showAnser === true) {
+  //     if (correctAnswer === answer) {
+  //       return { backgroundColor: "rgb(121, 240, 121)" };
+  //     } else if (selectedAnser === answer) {
+  //       return { backgroundColor: "red" };
+  //     } else {
+  //       return;
+  //     }
+  //   }
+  // };
+
   return (
     <div className="container p-4 w-50 mt-5">
       {loading ? (
@@ -81,7 +100,10 @@ const DisplayQuestion = ({ name, categorieID, difficultyID, typeID }) => {
                   <button
                     id={i}
                     key={index}
-                    onClick={(e) => select(e.target)}
+                    onClick={(e) => {
+                      select(e.target);
+                    }}
+                    // style={style(i)}
                     type="button"
                     className="btn btn-outline-dark w-100 my-2"
                   >
